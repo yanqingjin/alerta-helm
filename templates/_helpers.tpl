@@ -1,39 +1,30 @@
 {{/*
 Expand the name of the chart.
 */}}
-{{- define "alerta-helm.name" -}}
-{{- default .Chart.Name .Values.nameOverride | trunc 63 | trimSuffix "-" }}
+{{- define "alerta-helm.chartName" -}}
+{{- .Chart.Name | trunc 63 | trimSuffix "-" }}
 {{- end }}
 
 {{/*
-Create a default fully qualified app name.
+Create a default fully qualified appname and namespace.
 We truncate at 63 chars because some Kubernetes name fields are limited to this (by the DNS naming spec).
 If release name contains chart name it will be used as a full name.
 */}}
-{{- define "alerta-helm.fullname" -}}
-{{- if .Values.fullnameOverride }}
-{{- .Values.fullnameOverride | trunc 63 | trimSuffix "-" }}
-{{- else }}
-{{- $name := default .Chart.Name .Values.nameOverride }}
-{{- if contains $name .Release.Name }}
-{{- .Release.Name | trunc 63 | trimSuffix "-" }}
-{{- else }}
-{{- printf "%s-%s" .Release.Name $name | trunc 63 | trimSuffix "-" }}
+{{- define "alerta-helm.name" -}}
+{{- .Values.name | trunc 63 | trimSuffix "-" }}
 {{- end }}
-{{- end }}
-{{- end }}
-
-{{/*
-Create chart name and version as used by the chart label.
-*/}}
-{{- define "alerta-helm.chart" -}}
-{{- printf "%s-%s" .Chart.Name .Chart.Version | replace "+" "_" | trunc 63 | trimSuffix "-" }}
+{{- define "alerta-helm.namespace" -}}
+{{- .Values.namespace | trunc 63 | trimSuffix "-" }}
 {{- end }}
 
 {{/*
 Common labels
 */}}
+{{- define "alerta-helm.chart" -}}
+{{- printf "%s-%s" .Chart.Name .Chart.Version | replace "+" "_" | trunc 63 | trimSuffix "-" }}
+{{- end }}
 {{- define "alerta-helm.labels" -}}
+app: {{ include "alerta-helm.name" . }}
 helm.sh/chart: {{ include "alerta-helm.chart" . }}
 {{ include "alerta-helm.selectorLabels" . }}
 {{- if .Chart.AppVersion }}
@@ -46,7 +37,8 @@ app.kubernetes.io/managed-by: {{ .Release.Service }}
 Selector labels
 */}}
 {{- define "alerta-helm.selectorLabels" -}}
-app.kubernetes.io/name: {{ include "alerta-helm.name" . }}
+app: {{ include "alerta-helm.name" . }}
+app.kubernetes.io/name: {{ include "alerta-helm.chartName" . }}
 app.kubernetes.io/instance: {{ .Release.Name }}
 {{- end }}
 
@@ -55,7 +47,7 @@ Create the name of the service account to use
 */}}
 {{- define "alerta-helm.serviceAccountName" -}}
 {{- if .Values.serviceAccount.create }}
-{{- default (include "alerta-helm.fullname" .) .Values.serviceAccount.name }}
+{{- default (include "alerta-helm.name" .) .Values.serviceAccount.name }}
 {{- else }}
 {{- default "default" .Values.serviceAccount.name }}
 {{- end }}

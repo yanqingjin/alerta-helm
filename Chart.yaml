@@ -1,6 +1,7 @@
 apiVersion: v2
 name: alerta-helm
-description: A Helm chart for Kubernetes
+description: A Helm chart for deploying alerta on Alicloud
+icon: https://helm.sh/img/favicon-152.png
 
 # A chart can be either an 'application' or a 'library' chart.
 #
