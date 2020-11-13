@@ -17,8 +17,8 @@ service:
 
 env:
   - name: DATABASE_URL
-    value: mongodb://root:Philips123@dds-uf61689091334d341.mongodb.rds.aliyuncs.com:3717,dds-uf61689091334d342.mongodb.rds.aliyuncs.com:3717/admin?replicaSet=mgset-13119823
-    # value: mongodb://host.docker.internal:27017/monitoring
+    # value: mongodb://root:Philips123@dds-uf61689091334d341.mongodb.rds.aliyuncs.com:3717,dds-uf61689091334d342.mongodb.rds.aliyuncs.com:3717/admin?replicaSet=mgset-13119823
+    value: mongodb://host.docker.internal:27017/monitoring
 
 serviceAccount:
   # Specifies whether a service account should be created
