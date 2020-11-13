@@ -4,7 +4,7 @@ namespace: alerta-ns
 image:
   repository: registry.cn-shanghai.aliyuncs.com/hsc-public/alerta-server
   pullPolicy: Always
-  tag: ""
+  # tag: ""
 imagePullSecrets: []
 
 service:
@@ -16,8 +16,8 @@ replicaCount: 1
 containers:
   env: 
     - name: DATABASE_URL
-      value: mongodb://host.docker.internal:27017/monitoring
-      # value: mongodb://root:Philips123@dds-uf61689091334d341.mongodb.rds.aliyuncs.com:3717,dds-uf61689091334d342.mongodb.rds.aliyuncs.com:3717/admin?replicaSet=mgset-13119823
+      value: mongodb://root:Philips123@dds-uf61689091334d341.mongodb.rds.aliyuncs.com:3717,dds-uf61689091334d342.mongodb.rds.aliyuncs.com:3717/admin?replicaSet=mgset-13119823
+      # value: mongodb://host.docker.internal:27017/monitoring
 
 autoscaling:
   enabled: false

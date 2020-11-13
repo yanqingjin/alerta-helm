@@ -38,7 +38,7 @@ Selector labels
 */}}
 {{- define "alerta-helm.selectorLabels" -}}
 app: {{ include "alerta-helm.name" . }}
-app.kubernetes.io/name: {{ include "alerta-helm.chartName" . }}
+app.kubernetes.io/name: {{ include "alerta-helm.name" . }}
 app.kubernetes.io/instance: {{ .Release.Name }}
 {{- end }}
 
