@@ -6,9 +6,9 @@ namespace: alerta-ns
 replicaCount: 1
 
 image:
-  repository: https://cr.console.aliyun.com/repository/cn-shanghai/hsc-public/alerta-server
-  pullPolicy: Always
-  tag: v8.0.3
+  repository: registry.cn-shanghai.aliyuncs.com/hsc-public/alerta-server
+  tag: f36c0c0
+imagePullPolicy: IfNotPresent
 imagePullSecrets: []
 
 service:
