@@ -1,13 +1,23 @@
-nameOverride: web # svc-read, svc-write, web
-fullnameOverride: alerta
-
 namespace: alerta-ns
 
 replicaCount: 1
 
-image:
-  repository: registry.cn-shanghai.aliyuncs.com/hsc-public/alerta-server
-  tag: f36c0c0
+read:
+  name: alerta-read
+  image:
+    repository: registry.cn-shanghai.aliyuncs.com/hsc-public/alerta-server
+    tag: f36c0c0
+write:
+  name: alerta-write
+  image:
+    repository: registry.cn-shanghai.aliyuncs.com/hsc-public/alerta-server
+    tag: f36c0c0
+web:
+  name: alerta-web
+  image:
+    repository: registry.cn-shanghai.aliyuncs.com/hsc-public/alerta-ui
+    tag: aa67d0c
+
 imagePullPolicy: IfNotPresent
 imagePullSecrets: []
 
