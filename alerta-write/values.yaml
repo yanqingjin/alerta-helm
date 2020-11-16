@@ -6,18 +6,19 @@ fullnameOverride: ""
 namespace: alerta-ns
 
 image:
-  repository: registry.cn-shanghai.aliyuncs.com/hsc-public/alerta-ui
-  tag: aa67d0c
+  repository: registry.cn-shanghai.aliyuncs.com/hsc-public/alerta-server
+  tag: f36c0c0
   pullPolicy: IfNotPresent
 imagePullSecrets: []
 
+env:
+  - name: DATABASE_URL
+    # value: mongodb://root:Philips123@dds-uf61689091334d341.mongodb.rds.aliyuncs.com:3717,dds-uf61689091334d342.mongodb.rds.aliyuncs.com:3717/admin?replicaSet=mgset-13119823
+    value: mongodb://host.docker.internal:27017/monitoring
+
 service:
   type: NodePort
-  port: 8080
-
-env:
-  - name: VUE_APP_ALERTA_ENDPOINT
-    value: http://localhost:5000
+  port: 8000
 
 serviceAccount:
   # Specifies whether a service account should be created
