@@ -1,24 +1,24 @@
-nameOverride: web # svc-read, svc-write, web
-fullnameOverride: alerta
+replicaCount: 1
+
+nameOverride: ""
+fullnameOverride: ""
 
 namespace: alerta-ns
-
-replicaCount: 1
 
 image:
   repository: registry.cn-shanghai.aliyuncs.com/hsc-public/alerta-server
   tag: f36c0c0
-imagePullPolicy: IfNotPresent
+  pullPolicy: IfNotPresent
 imagePullSecrets: []
-
-service:
-  type: NodePort
-  port: 8080
 
 env:
   - name: DATABASE_URL
     # value: mongodb://root:Philips123@dds-uf61689091334d341.mongodb.rds.aliyuncs.com:3717,dds-uf61689091334d342.mongodb.rds.aliyuncs.com:3717/admin?replicaSet=mgset-13119823
     value: mongodb://host.docker.internal:27017/monitoring
+
+service:
+  type: NodePort
+  port: 5000
 
 serviceAccount:
   # Specifies whether a service account should be created
