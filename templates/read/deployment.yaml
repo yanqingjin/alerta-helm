@@ -1,20 +1,19 @@
----
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "alerta-read.fullname" . }}
-  namespace: {{ include "alerta-read.namespace" . }}
+  name: {{ include "alerta-helm.fullname" . }}-read
+  namespace: {{ include "alerta-helm.namespace" . }}
   labels:
-    app: {{ include "alerta-read.fullname" . }}
-    {{- include "alerta-read.labels" . | nindent 4 }}
+    app: {{ include "alerta-helm.fullname" . }}-read
+    {{- include "alerta-helm.labels" . | nindent 4 }}
 spec:
-  {{- if not .Values.autoscaling.enabled }}
-  replicas: {{ .Values.replicaCount }}
+  {{- if not .Values.read.autoscaling.enabled }}
+  replicas: {{ .Values.read.replicaCount }}
   {{- end }}
   selector:
     matchLabels:
-      app: {{ include "alerta-read.fullname" . }}
-      {{- include "alerta-read.selectorLabels" . | nindent 6 }}
+      app: {{ include "alerta-helm.fullname" . }}-read
+      {{- include "alerta-helm.selectorLabels" . | nindent 6 }}
   template:
     metadata:
       {{- with .Values.podAnnotations }}
@@ -22,29 +21,27 @@ spec:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       labels:
-        app: {{ include "alerta-read.fullname" . }}
-        {{- include "alerta-read.selectorLabels" . | nindent 8 }}
+        app: {{ include "alerta-helm.fullname" . }}-read
+        {{- include "alerta-helm.selectorLabels" . | nindent 8 }}
     spec:
       {{- with .Values.imagePullSecrets }}
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-      serviceAccountName: {{ include "alerta-read.serviceAccountName" . }}
+      serviceAccountName: {{ include "alerta-helm.serviceAccountName" . }}
       securityContext:
         {{- toYaml .Values.podSecurityContext | nindent 8 }}
       containers:
-        - name: {{ include "alerta-read.fullname" . }}
-          {{- with .Values.env }}
+        - name: {{ include "alerta-helm.fullname" . }}-read
+          {{- with .Values.read.env }}
           env:
             {{- toYaml . | nindent 12 }}
           {{- end }}
-          securityContext:
-            {{- toYaml .Values.securityContext | nindent 12 }}
-          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
-          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          image: "{{ .Values.read.image.repository }}:{{ .Values.read.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.imagePullPolicy }}
           ports:
-            - name: {{ include "alerta-read.fullname" . }}
-              containerPort: {{ .Values.service.port }}
+            - name: {{ include "alerta-helm.fullname" . }}-read
+              containerPort: {{ .Values.read.service.port }}
               protocol: TCP
           # livenessProbe:
           #   httpGet:
@@ -56,6 +53,8 @@ spec:
           #     port: http
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
