@@ -1,5 +1,5 @@
 apiVersion: v2
-name: alerta-read
+name: alerta-helm
 description: A Helm chart for deploying alerta on Alicloud
 icon: https://helm.sh/img/favicon-152.png
 
