@@ -12,12 +12,12 @@ read:
     repository: registry.cn-shanghai.aliyuncs.com/hsc-public/alerta-server
     tag: f36c0c0
   service:
-    type: LoadBalancer
+    type: ClusterIP
     port: 8080
   env:
     - name: DATABASE_URL
-      value: mongodb://root:Philips123@dds-uf61689091334d341.mongodb.rds.aliyuncs.com:3717,dds-uf61689091334d342.mongodb.rds.aliyuncs.com:3717/admin?replicaSet=mgset-13119823
-      # value: mongodb://host.docker.internal:27017/monitoring
+      # value: mongodb://root:Philips123@dds-uf61689091334d341.mongodb.rds.aliyuncs.com:3717,dds-uf61689091334d342.mongodb.rds.aliyuncs.com:3717/admin?replicaSet=mgset-13119823
+      value: mongodb://host.docker.internal:27017/monitoring
   autoscaling:
     enabled: false
     minReplicas: 1
@@ -34,8 +34,8 @@ write:
     port: 8080
   env:
     - name: DATABASE_URL
-      value: mongodb://root:Philips123@dds-uf61689091334d341.mongodb.rds.aliyuncs.com:3717,dds-uf61689091334d342.mongodb.rds.aliyuncs.com:3717/admin?replicaSet=mgset-13119823
-      # value: mongodb://host.docker.internal:27017/monitoring
+      # value: mongodb://root:Philips123@dds-uf61689091334d341.mongodb.rds.aliyuncs.com:3717,dds-uf61689091334d342.mongodb.rds.aliyuncs.com:3717/admin?replicaSet=mgset-13119823
+      value: mongodb://host.docker.internal:27017/monitoring
   autoscaling:
     enabled: false
     minReplicas: 1

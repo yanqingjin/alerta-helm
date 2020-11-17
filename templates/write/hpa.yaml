@@ -1,17 +1,17 @@
-{{- if .Values.read.autoscaling.enabled }}
+{{- if .Values.write.autoscaling.enabled }}
 apiVersion: autoscaling/v2beta1
 kind: HorizontalPodAutoscaler
 metadata:
-  name: {{ include "alerta-helm.fullname" . }}-read
+  name: {{ include "alerta-helm.fullname" . }}-write
   labels:
-    app: {{ include "alerta-helm.fullname" . }}-read
+    app: {{ include "alerta-helm.fullname" . }}-write
     {{- include "alerta-helm.labels" . | nindent 4 }}
 spec:
   scaleTargetRef:
     apiVersion: apps/v1
     kind: Deployment
-    name: {{ include "alerta-helm.fullname" . }}-read
-  {{- with .Values.read.autoscaling }}
+    name: {{ include "alerta-helm.fullname" . }}-write
+  {{- with .Values.write.autoscaling }}
   minReplicas: {{ .minReplicas }}
   maxReplicas: {{ .maxReplicas }}
   metrics:

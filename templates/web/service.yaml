@@ -1,0 +1,19 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "alerta-helm.fullname" . }}-web
+  namespace: {{ include "alerta-helm.namespace" . }}
+  labels:
+    app: {{ include "alerta-helm.fullname" . }}-web
+    {{- include "alerta-helm.labels" . | nindent 4 }}
+spec:
+  type: {{ .Values.web.service.type }}
+  ports:
+    - name: {{ include "alerta-helm.fullname" . }}-web
+      port: {{ .Values.web.service.port }}
+      targetPort: {{ .Values.web.service.port }}
+      protocol: TCP
+  selector:
+    app: {{ include "alerta-helm.fullname" . }}-web
+    {{- include "alerta-helm.selectorLabels" . | nindent 4 }}
