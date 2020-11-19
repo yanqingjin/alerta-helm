@@ -1,0 +1,31 @@
+{{- if .Values.read.autoscaling.enabled }}
+apiVersion: autoscaling/v2beta1
+kind: HorizontalPodAutoscaler
+metadata:
+  name: {{ include "alerta-helm.fullname" . }}-read
+  labels:
+    app: {{ include "alerta-helm.fullname" . }}-read
+    {{- include "alerta-helm.labels" . | nindent 4 }}
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: {{ include "alerta-helm.fullname" . }}-read
+  {{- with .Values.read.autoscaling }}
+  minReplicas: {{ .minReplicas }}
+  maxReplicas: {{ .maxReplicas }}
+  metrics:
+    {{- if .targetCPUUtilizationPercentage }}
+    - type: Resource
+      resource:
+        name: cpu
+        targetAverageUtilization: {{ .targetCPUUtilizationPercentage }}
+    {{- end }}
+    {{- if .targetMemoryUtilizationPercentage }}
+    - type: Resource
+      resource:
+        name: memory
+        targetAverageUtilization: {{ .targetMemoryUtilizationPercentage }}
+    {{- end }}
+  {{- end }}
+{{- end }}

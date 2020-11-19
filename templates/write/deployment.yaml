@@ -2,18 +2,18 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "alerta-helm.fullname" . }}
-  namespace: {{ .Values.namespace }}
+  name: {{ include "alerta-helm.fullname" . }}-write
+  namespace: {{ include "alerta-helm.namespace" . }}
   labels:
-    app: {{ include "alerta-helm.fullname" . }}
+    app: {{ include "alerta-helm.fullname" . }}-write
     {{- include "alerta-helm.labels" . | nindent 4 }}
 spec:
-  {{- if not .Values.autoscaling.enabled }}
-  replicas: {{ .Values.replicaCount }}
+  {{- if not .Values.write.autoscaling.enabled }}
+  replicas: {{ .Values.write.replicaCount }}
   {{- end }}
   selector:
     matchLabels:
-      app: {{ include "alerta-helm.fullname" . }}
+      app: {{ include "alerta-helm.fullname" . }}-write
       {{- include "alerta-helm.selectorLabels" . | nindent 6 }}
   template:
     metadata:
@@ -22,7 +22,7 @@ spec:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       labels:
-        app: {{ include "alerta-helm.fullname" . }}
+        app: {{ include "alerta-helm.fullname" . }}-write
         {{- include "alerta-helm.selectorLabels" . | nindent 8 }}
     spec:
       {{- with .Values.imagePullSecrets }}
@@ -33,16 +33,16 @@ spec:
       securityContext:
         {{- toYaml .Values.podSecurityContext | nindent 8 }}
       containers:
-        - name: {{ .Chart.Name }}
-          {{- with .Values.env }}
+        - name: {{ include "alerta-helm.fullname" . }}-write
+          {{- with .Values.write.env }}
           env:
             {{- toYaml . | nindent 12 }}
           {{- end }}
-          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          image: "{{ .Values.write.image.repository }}:{{ .Values.write.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.imagePullPolicy }}
           ports:
-            - name: {{ include "alerta-helm.fullname" . }}
-              containerPort: {{ .Values.service.port }}
+            - name: {{ include "alerta-helm.fullname" . }}-write
+              containerPort: {{ .Values.write.service.port }}
               protocol: TCP
           # livenessProbe:
           #   httpGet:
@@ -68,23 +68,3 @@ spec:
       tolerations:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: {{ include "alerta-helm.fullname" . }}
-  namespace: {{ .Values.namespace }}
-  labels:
-    app: {{ include "alerta-helm.fullname" . }}
-    {{- include "alerta-helm.labels" . | nindent 4 }}
-spec:
-  type: {{ .Values.service.type }}
-  ports:
-    - name: {{ include "alerta-helm.fullname" . }}
-      port: {{ .Values.service.port }}
-      targetPort: {{ .Values.service.port }}
-      protocol: TCP
-  selector:
-    app: {{ include "alerta-helm.fullname" . }}
-    {{- include "alerta-helm.selectorLabels" . | nindent 4 }}

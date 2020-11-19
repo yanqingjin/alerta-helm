@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: "{{ include "alerta-helm.fullname" . }}-read-test-connection"
+  labels:
+    app: {{ include "alerta-helm.fullname" . }}-read
+    {{- include "alerta-helm.labels" . | nindent 4 }}
+  annotations:
+    "helm.sh/hook": test
+spec:
+  containers:
+    - name: wget
+      image: busybox
+      command: ['wget']
+      args: ['{{ include "alerta-helm.fullname" . }}-read:{{ .Values.read.service.port }}']
+  restartPolicy: Never

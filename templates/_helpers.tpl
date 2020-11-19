@@ -1,8 +1,11 @@
 {{/*
-Expand the name of the chart.
+Name & namespace of the chart.
 */}}
 {{- define "alerta-helm.name" -}}
 {{- default .Chart.Name .Values.nameOverride | trunc 63 | trimSuffix "-" }}
+{{- end }}
+{{- define "alerta-helm.namespace" -}}
+{{- .Values.namespace | trunc 63 | trimSuffix "-" }}
 {{- end }}
 
 {{/*

@@ -1,24 +1,60 @@
-nameOverride: web # svc-read, svc-write, web
-fullnameOverride: alerta
-
 namespace: alerta-ns
 
-replicaCount: 1
+nameOverride: ""
+fullnameOverride: alerta
 
-image:
-  repository: registry.cn-shanghai.aliyuncs.com/hsc-public/alerta-server
-  tag: f36c0c0
 imagePullPolicy: IfNotPresent
 imagePullSecrets: []
 
-service:
-  type: NodePort
-  port: 8080
-
-env:
-  - name: DATABASE_URL
-    # value: mongodb://root:Philips123@dds-uf61689091334d341.mongodb.rds.aliyuncs.com:3717,dds-uf61689091334d342.mongodb.rds.aliyuncs.com:3717/admin?replicaSet=mgset-13119823
-    value: mongodb://host.docker.internal:27017/monitoring
+read:
+  replicaCount: 1
+  image:
+    repository: registry.cn-shanghai.aliyuncs.com/hsc-public/alerta-server
+    tag: f36c0c0
+  service:
+    type: ClusterIP
+    port: 8080
+  env:
+    - name: DATABASE_URL
+      value: mongodb://host.docker.internal:27017/monitoring
+  autoscaling:
+    enabled: false
+    minReplicas: 1
+    maxReplicas: 100
+    targetCPUUtilizationPercentage: 80
+    # targetMemoryUtilizationPercentage: 80
+write:
+  replicaCount: 1
+  image:
+    repository: registry.cn-shanghai.aliyuncs.com/hsc-public/alerta-server
+    tag: f36c0c0
+  service:
+    type: LoadBalancer
+    port: 8080
+  env:
+    - name: DATABASE_URL
+      value: mongodb://host.docker.internal:27017/monitoring
+  autoscaling:
+    enabled: false
+    minReplicas: 1
+    maxReplicas: 100
+    targetCPUUtilizationPercentage: 80
+    # targetMemoryUtilizationPercentage: 80
+web:
+  replicaCount: 1
+  image:
+    repository: registry.cn-shanghai.aliyuncs.com/hsc-public/alerta-ui
+    tag: aa67d0c
+  service:
+    type: LoadBalancer
+    port: 80
+  env: []
+  autoscaling:
+    enabled: false
+    minReplicas: 1
+    maxReplicas: 100
+    targetCPUUtilizationPercentage: 80
+    # targetMemoryUtilizationPercentage: 80
 
 serviceAccount:
   # Specifies whether a service account should be created
@@ -66,13 +102,6 @@ resources:
   requests:
     cpu: 100m
     memory: 128Mi
-
-autoscaling:
-  enabled: false
-  minReplicas: 1
-  maxReplicas: 100
-  targetCPUUtilizationPercentage: 80
-  # targetMemoryUtilizationPercentage: 80
 
 nodeSelector: {}
 
