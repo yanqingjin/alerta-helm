@@ -14,12 +14,15 @@ read:
   service:
     type: LoadBalancer
     port: 8080
-  volumeMountPath: /etc
+  # configMapData:
+  #   - name: alertad.conf
+  #     value: CORS_ORIGINS = [r'https?://*philips-healthsuitechina.com.cn*']
+  volumeMountPath: /mnt
   env:
     - name: DATABASE_URL
       value: mongodb://host.docker.internal:27017/monitoring
-    # - name: ALERTA_SVR_CONF_FILE
-    #   value: /mnt/alertad.conf
+    - name: ALERTA_SVR_CONF_FILE
+      value: /mnt/alertad.conf
   autoscaling:
     enabled: false
     minReplicas: 1

@@ -6,4 +6,6 @@ metadata:
   namespace: {{ include "alerta-helm.namespace" . }}
 data:
   config.json: |-
-    {"endpoint": "http://alerta-read-alerta-ns.apps.okd.philips-healthsuitechina.com.cn"}
+    {
+      "endpoint": "http://alerta-read-alerta-ns.apps.okd.philips-healthsuitechina.com.cn"
+    }
