@@ -32,6 +32,10 @@ spec:
       serviceAccountName: {{ include "alerta-helm.serviceAccountName" . }}
       securityContext:
         {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      volumes:
+        - name: {{ include "alerta-helm.fullname" . }}-web-volume
+          configMap:
+            name: {{ include "alerta-helm.fullname" . }}-web-config
       containers:
         - name: {{ include "alerta-helm.fullname" . }}-web
           {{- with .Values.web.env }}
@@ -44,6 +48,9 @@ spec:
             - name: {{ include "alerta-helm.fullname" . }}-web
               containerPort: {{ .Values.web.service.port }}
               protocol: TCP
+          volumeMounts:
+            - name: {{ include "alerta-helm.fullname" . }}-web-volume
+              mountPath: {{ .Values.web.volumeMountPath }}
           # livenessProbe:
           #   httpGet:
           #     path: /

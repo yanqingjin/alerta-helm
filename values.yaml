@@ -10,24 +10,28 @@ read:
   replicaCount: 1
   image:
     repository: registry.cn-shanghai.aliyuncs.com/hsc-public/alerta-server
-    tag: f36c0c0
+    tag: fa75125
   service:
-    type: ClusterIP
+    type: LoadBalancer
     port: 8080
+  volumeMountPath: /etc
   env:
     - name: DATABASE_URL
       value: mongodb://host.docker.internal:27017/monitoring
+    # - name: ALERTA_SVR_CONF_FILE
+    #   value: /mnt/alertad.conf
   autoscaling:
     enabled: false
     minReplicas: 1
     maxReplicas: 100
     targetCPUUtilizationPercentage: 80
     # targetMemoryUtilizationPercentage: 80
+
 write:
   replicaCount: 1
   image:
     repository: registry.cn-shanghai.aliyuncs.com/hsc-public/alerta-server
-    tag: f36c0c0
+    tag: fa75125
   service:
     type: LoadBalancer
     port: 8080
@@ -40,15 +44,17 @@ write:
     maxReplicas: 100
     targetCPUUtilizationPercentage: 80
     # targetMemoryUtilizationPercentage: 80
+
 web:
   replicaCount: 1
   image:
     repository: registry.cn-shanghai.aliyuncs.com/hsc-public/alerta-ui
-    tag: aa67d0c
+    tag: 509db5e
   service:
     type: LoadBalancer
-    port: 80
+    port: 8080
   env: []
+  volumeMountPath: /app/public
   autoscaling:
     enabled: false
     minReplicas: 1
