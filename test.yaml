@@ -1,0 +1,362 @@
+---
+# Source: alerta-helm/templates/alerta-config.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: alerta-config
+  namespace: alerta
+  labels:
+    helm.sh/chart: alerta-helm-0.1.0
+    app.kubernetes.io/name: alerta-helm
+    app.kubernetes.io/instance: alerta
+    app.kubernetes.io/version: "1.16.0"
+    app.kubernetes.io/managed-by: Helm
+data:
+  alertad.conf: |
+    CORS_ORIGINS = [r'https?://*philips-healthsuitechina.com.cn*']
+  config.json: |
+    {
+      "endpoint": http://alerta-read-alerta-ns.apps.okd.philips-healthsuitechina.com.cn
+    }
+---
+# Source: alerta-helm/templates/read/service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: alerta-read
+  namespace: alerta
+  labels:
+    app: alerta-read
+    helm.sh/chart: alerta-helm-0.1.0
+    app.kubernetes.io/name: alerta-helm
+    app.kubernetes.io/instance: alerta
+    app.kubernetes.io/version: "1.16.0"
+    app.kubernetes.io/managed-by: Helm
+spec:
+  type: ClusterIP
+  ports:
+    - name: alerta-read
+      port: 8080
+      targetPort: 8080
+      protocol: TCP
+  selector:
+    app: alerta-read
+    app.kubernetes.io/name: alerta-helm
+    app.kubernetes.io/instance: alerta
+---
+# Source: alerta-helm/templates/web/service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: alerta-web
+  namespace: alerta
+  labels:
+    app: alerta-web
+    helm.sh/chart: alerta-helm-0.1.0
+    app.kubernetes.io/name: alerta-helm
+    app.kubernetes.io/instance: alerta
+    app.kubernetes.io/version: "1.16.0"
+    app.kubernetes.io/managed-by: Helm
+spec:
+  type: ClusterIP
+  ports:
+    - name: alerta-web
+      port: 8080
+      targetPort: 8080
+      protocol: TCP
+  selector:
+    app: alerta-web
+    app.kubernetes.io/name: alerta-helm
+    app.kubernetes.io/instance: alerta
+---
+# Source: alerta-helm/templates/write/service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: alerta-write
+  namespace: alerta
+  labels:
+    app: alerta-write
+    helm.sh/chart: alerta-helm-0.1.0
+    app.kubernetes.io/name: alerta-helm
+    app.kubernetes.io/instance: alerta
+    app.kubernetes.io/version: "1.16.0"
+    app.kubernetes.io/managed-by: Helm
+spec:
+  type: ClusterIP
+  ports:
+    - name: alerta-write
+      port: 8080
+      targetPort: 8080
+      protocol: TCP
+  selector:
+    app: alerta-write
+    app.kubernetes.io/name: alerta-helm
+    app.kubernetes.io/instance: alerta
+---
+# Source: alerta-helm/templates/read/deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: alerta-read
+  namespace: alerta
+  labels:
+    app: alerta-read
+    helm.sh/chart: alerta-helm-0.1.0
+    app.kubernetes.io/name: alerta-helm
+    app.kubernetes.io/instance: alerta
+    app.kubernetes.io/version: "1.16.0"
+    app.kubernetes.io/managed-by: Helm
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: alerta-read
+      app.kubernetes.io/name: alerta-helm
+      app.kubernetes.io/instance: alerta
+  template:
+    metadata:
+      labels:
+        app: alerta-read
+        app.kubernetes.io/name: alerta-helm
+        app.kubernetes.io/instance: alerta
+    spec:
+      serviceAccountName: default
+      securityContext:
+        {}
+      volumes:
+        - name: alerta-config
+          configMap:
+            name: alerta-config
+      containers:
+        - name: alerta-read
+          env:
+            - name: DATABASE_URL
+              value: postgres://alerta:alerta@alerta-postgresql:5432/alerta
+            - name: ALERTA_SVR_CONF_FILE
+              value: /etc/alerta/alertad.conf
+          image: "registry.cn-shanghai.aliyuncs.com/hsc-public/alerta-server:fa75125"
+          imagePullPolicy: IfNotPresent
+          ports:
+            - name: alerta-read
+              containerPort: 8080
+              protocol: TCP
+          volumeMounts:
+            - name: alerta-config
+              mountPath: /etc/alerta/alertad.conf
+              subPath: alertad.conf
+              readOnly: true
+          # livenessProbe:
+          #   httpGet:
+          #     path: /
+          #     port: http
+          # readinessProbe:
+          #   httpGet:
+          #     path: /
+          #     port: http
+          resources:
+            limits:
+              cpu: 100m
+              memory: 128Mi
+            requests:
+              cpu: 100m
+              memory: 128Mi
+          securityContext:
+            {}
+---
+# Source: alerta-helm/templates/web/deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: alerta-web
+  namespace: alerta
+  labels:
+    app: alerta-web
+    helm.sh/chart: alerta-helm-0.1.0
+    app.kubernetes.io/name: alerta-helm
+    app.kubernetes.io/instance: alerta
+    app.kubernetes.io/version: "1.16.0"
+    app.kubernetes.io/managed-by: Helm
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: alerta-web
+      app.kubernetes.io/name: alerta-helm
+      app.kubernetes.io/instance: alerta
+  template:
+    metadata:
+      labels:
+        app: alerta-web
+        app.kubernetes.io/name: alerta-helm
+        app.kubernetes.io/instance: alerta
+    spec:
+      serviceAccountName: default
+      securityContext:
+        {}
+      volumes:
+        - name: alerta-config
+          configMap:
+            name: alerta-config
+      containers:
+        - name: alerta-web
+          image: "registry.cn-shanghai.aliyuncs.com/hsc-public/alerta-ui:509db5e"
+          imagePullPolicy: IfNotPresent
+          ports:
+            - name: alerta-web
+              containerPort: 8080
+              protocol: TCP
+          volumeMounts:
+            - name: alerta-config
+              mountPath: /usr/share/nginx/html/config.json
+              subPath: config.json
+              readOnly: true
+          # livenessProbe:
+          #   httpGet:
+          #     path: /
+          #     port: http
+          # readinessProbe:
+          #   httpGet:
+          #     path: /
+          #     port: http
+          resources:
+            limits:
+              cpu: 100m
+              memory: 128Mi
+            requests:
+              cpu: 100m
+              memory: 128Mi
+          securityContext:
+            {}
+---
+# Source: alerta-helm/templates/write/deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: alerta-write
+  namespace: alerta
+  labels:
+    app: alerta-write
+    helm.sh/chart: alerta-helm-0.1.0
+    app.kubernetes.io/name: alerta-helm
+    app.kubernetes.io/instance: alerta
+    app.kubernetes.io/version: "1.16.0"
+    app.kubernetes.io/managed-by: Helm
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: alerta-write
+      app.kubernetes.io/name: alerta-helm
+      app.kubernetes.io/instance: alerta
+  template:
+    metadata:
+      labels:
+        app: alerta-write
+        app.kubernetes.io/name: alerta-helm
+        app.kubernetes.io/instance: alerta
+    spec:
+      serviceAccountName: default
+      securityContext:
+        {}
+      containers:
+        - name: alerta-write
+          env:
+            - name: DATABASE_URL
+              value: postgres://alerta:alerta@alerta-postgresql:5432/alerta
+          image: "registry.cn-shanghai.aliyuncs.com/hsc-public/alerta-server:fa75125"
+          imagePullPolicy: IfNotPresent
+          ports:
+            - name: alerta-write
+              containerPort: 8080
+              protocol: TCP
+          # livenessProbe:
+          #   httpGet:
+          #     path: /
+          #     port: http
+          # readinessProbe:
+          #   httpGet:
+          #     path: /
+          #     port: http
+          resources:
+            limits:
+              cpu: 100m
+              memory: 128Mi
+            requests:
+              cpu: 100m
+              memory: 128Mi
+          securityContext:
+            {}
+---
+# Source: alerta-helm/templates/requirements.yaml
+dependencies:
+  - name: postgresql
+    version: 8.6.4
+    repository: https://charts.helm.sh/stable
+    condition: postgresql.enabled
+---
+# Source: alerta-helm/templates/read/test/test-connection.yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: "alerta-read-test-connection"
+  labels:
+    app: alerta-read
+    helm.sh/chart: alerta-helm-0.1.0
+    app.kubernetes.io/name: alerta-helm
+    app.kubernetes.io/instance: alerta
+    app.kubernetes.io/version: "1.16.0"
+    app.kubernetes.io/managed-by: Helm
+  annotations:
+    "helm.sh/hook": test
+spec:
+  containers:
+    - name: wget
+      image: busybox
+      command: ['wget']
+      args: ['alerta-read:8080']
+  restartPolicy: Never
+---
+# Source: alerta-helm/templates/web/test/test-connection.yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: "alerta-web-test-connection"
+  labels:
+    app: alerta-web
+    helm.sh/chart: alerta-helm-0.1.0
+    app.kubernetes.io/name: alerta-helm
+    app.kubernetes.io/instance: alerta
+    app.kubernetes.io/version: "1.16.0"
+    app.kubernetes.io/managed-by: Helm
+  annotations:
+    "helm.sh/hook": test
+spec:
+  containers:
+    - name: wget
+      image: busybox
+      command: ['wget']
+      args: ['alerta-web:8080']
+  restartPolicy: Never
+---
+# Source: alerta-helm/templates/write/test/test-connection.yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: "alerta-write-test-connection"
+  labels:
+    app: alerta-write
+    helm.sh/chart: alerta-helm-0.1.0
+    app.kubernetes.io/name: alerta-helm
+    app.kubernetes.io/instance: alerta
+    app.kubernetes.io/version: "1.16.0"
+    app.kubernetes.io/managed-by: Helm
+  annotations:
+    "helm.sh/hook": test
+spec:
+  containers:
+    - name: wget
+      image: busybox
+      command: ['wget']
+      args: ['alerta-write:8080']
+  restartPolicy: Never
