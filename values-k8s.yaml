@@ -4,7 +4,7 @@ read:
   ingress:
     enabled: true
     hosts:
-      - host: alerta-api-read.shenyang-k8s.internal
+      - host: alerta-read.example.local
         paths:
           - /
 
@@ -12,11 +12,11 @@ web:
   ingress:
     enabled: true
     hosts:
-      - host: alerta.shenyang-k8s.internal
+      - host: alerta-web.example.local
         paths:
           - /
 
 config:
   crosOrigins:
-    - r'https?://.*\.shenyang-k8s\.internal'
-  endpoint: http://alerta-api-read.shenyang-k8s.internal
+    - r'https?://.*\.example\.local'
+  endpoint: http://alerta-read.example.local
