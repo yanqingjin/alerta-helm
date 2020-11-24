@@ -1,0 +1,22 @@
+fullnameOverride: alerta
+
+read:
+  route:
+    enabled: true
+    host: alerta-read.apps.okd.philips-healthsuitechina.com.cn
+
+web:
+  route:
+    enabled: true
+    host: alerta-web.apps.okd.philips-healthsuitechina.com.cn
+
+config:
+  crosOrigins:
+    - r'https?://.*\.philips-healthsuitechina\.com\.cn'
+  endpoint: http://alerta-read.apps.okd.philips-healthsuitechina.com.cn
+
+postgresql:
+  enabled: false
+
+database:
+  url: mongodb://alerta:Philips123@dds-uf61689091334d341.mongodb.rds.aliyuncs.com:3717/alerta

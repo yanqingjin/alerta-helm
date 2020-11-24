@@ -3,7 +3,6 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: {{ include "alerta-helm.fullname" . }}-web
-  namespace: {{ include "alerta-helm.namespace" . }}
   labels:
     app: {{ include "alerta-helm.fullname" . }}-web
     {{- include "alerta-helm.labels" . | nindent 4 }}
@@ -17,10 +16,11 @@ spec:
       {{- include "alerta-helm.selectorLabels" . | nindent 6 }}
   template:
     metadata:
-      {{- with .Values.podAnnotations }}
       annotations:
-        {{- toYaml . | nindent 8 }}
-      {{- end }}
+        checksum/config: {{ include (print $.Template.BasePath "/alerta-configmap.yaml") . | sha256sum }}
+        {{- with .Values.podAnnotations }}
+        {{- toYaml .Values.podAnnotations | nindent 8 }}
+        {{- end }}
       labels:
         app: {{ include "alerta-helm.fullname" . }}-web
         {{- include "alerta-helm.selectorLabels" . | nindent 8 }}
@@ -33,9 +33,9 @@ spec:
       securityContext:
         {{- toYaml .Values.podSecurityContext | nindent 8 }}
       volumes:
-        - name: {{ include "alerta-helm.fullname" . }}-web-volume
+        - name: alerta-config
           configMap:
-            name: {{ include "alerta-helm.fullname" . }}-web-config
+            name: {{ include "alerta-helm.fullname" . }}-config
       containers:
         - name: {{ include "alerta-helm.fullname" . }}-web
           {{- with .Values.web.env }}
@@ -49,8 +49,10 @@ spec:
               containerPort: {{ .Values.web.service.port }}
               protocol: TCP
           volumeMounts:
-            - name: {{ include "alerta-helm.fullname" . }}-web-volume
-              mountPath: {{ .Values.web.volumeMountPath }}
+            - name: alerta-config
+              mountPath: /usr/share/nginx/html/config.json
+              subPath: config.json
+              readOnly: true
           # livenessProbe:
           #   httpGet:
           #     path: /

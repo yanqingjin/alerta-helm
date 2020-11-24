@@ -3,7 +3,6 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: {{ include "alerta-helm.fullname" . }}-write
-  namespace: {{ include "alerta-helm.namespace" . }}
   labels:
     app: {{ include "alerta-helm.fullname" . }}-write
     {{- include "alerta-helm.labels" . | nindent 4 }}
@@ -17,10 +16,11 @@ spec:
       {{- include "alerta-helm.selectorLabels" . | nindent 6 }}
   template:
     metadata:
-      {{- with .Values.podAnnotations }}
       annotations:
-        {{- toYaml . | nindent 8 }}
-      {{- end }}
+        checksum/config: {{ include (print $.Template.BasePath "/alerta-configmap.yaml") . | sha256sum }}
+        {{- with .Values.podAnnotations }}
+        {{- toYaml .Values.podAnnotations | nindent 8 }}
+        {{- end }}
       labels:
         app: {{ include "alerta-helm.fullname" . }}-write
         {{- include "alerta-helm.selectorLabels" . | nindent 8 }}
@@ -34,10 +34,17 @@ spec:
         {{- toYaml .Values.podSecurityContext | nindent 8 }}
       containers:
         - name: {{ include "alerta-helm.fullname" . }}-write
-          {{- with .Values.write.env }}
           env:
+            {{- if .Values.postgresql.enabled }}
+            - name: DATABASE_URL
+              value: postgres://{{ .Values.postgresql.postgresqlUsername }}:{{ .Values.postgresql.postgresqlPassword }}@{{ include "alerta-helm.fullname" . }}-postgresql:{{ .Values.postgresql.service.port }}/{{ .Values.postgresql.postgresqlDatabase }}
+            {{- else }}
+            - name: DATABASE_URL
+              value: {{ .Values.database.url }}
+            {{- end }}
+            {{- with .Values.write.env }}
             {{- toYaml . | nindent 12 }}
-          {{- end }}
+            {{- end }}
           image: "{{ .Values.write.image.repository }}:{{ .Values.write.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.imagePullPolicy }}
           ports:

@@ -3,7 +3,6 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: {{ include "alerta-helm.fullname" . }}-read
-  namespace: {{ include "alerta-helm.namespace" . }}
   labels:
     app: {{ include "alerta-helm.fullname" . }}-read
     {{- include "alerta-helm.labels" . | nindent 4 }}
@@ -17,10 +16,11 @@ spec:
       {{- include "alerta-helm.selectorLabels" . | nindent 6 }}
   template:
     metadata:
-      {{- with .Values.podAnnotations }}
       annotations:
-        {{- toYaml . | nindent 8 }}
-      {{- end }}
+        checksum/config: {{ include (print $.Template.BasePath "/alerta-configmap.yaml") . | sha256sum }}
+        {{- with .Values.podAnnotations }}
+        {{- toYaml .Values.podAnnotations | nindent 8 }}
+        {{- end }}
       labels:
         app: {{ include "alerta-helm.fullname" . }}-read
         {{- include "alerta-helm.selectorLabels" . | nindent 8 }}
@@ -33,15 +33,24 @@ spec:
       securityContext:
         {{- toYaml .Values.podSecurityContext | nindent 8 }}
       volumes:
-        - name: {{ include "alerta-helm.fullname" . }}-read-volume
+        - name: alerta-config
           configMap:
-            name: {{ include "alerta-helm.fullname" . }}-read-config
+            name: {{ include "alerta-helm.fullname" . }}-config
       containers:
         - name: {{ include "alerta-helm.fullname" . }}-read
-          {{- with .Values.read.env }}
           env:
+            {{- if .Values.postgresql.enabled }}
+            - name: DATABASE_URL
+              value: postgres://{{ .Values.postgresql.postgresqlUsername }}:{{ .Values.postgresql.postgresqlPassword }}@{{ include "alerta-helm.fullname" . }}-postgresql:{{ .Values.postgresql.service.port }}/{{ .Values.postgresql.postgresqlDatabase }}
+            {{- else }}
+            - name: DATABASE_URL
+              value: {{ .Values.database.url }}
+            {{- end }}
+            - name: ALERTA_SVR_CONF_FILE
+              value: /etc/alerta/alertad.conf
+            {{- with .Values.read.env }}
             {{- toYaml . | nindent 12 }}
-          {{- end }}
+            {{- end }}
           image: "{{ .Values.read.image.repository }}:{{ .Values.read.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.imagePullPolicy }}
           ports:
@@ -49,8 +58,10 @@ spec:
               containerPort: {{ .Values.read.service.port }}
               protocol: TCP
           volumeMounts:
-            - name: {{ include "alerta-helm.fullname" . }}-read-volume
-              mountPath: {{ .Values.read.volumeMountPath }}
+            - name: alerta-config
+              mountPath: /etc/alerta/alertad.conf
+              subPath: alertad.conf
+              readOnly: true
           # livenessProbe:
           #   httpGet:
           #     path: /

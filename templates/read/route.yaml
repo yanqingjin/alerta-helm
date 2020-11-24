@@ -1,0 +1,28 @@
+{{- if .Values.read.route.enabled }}
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  name: {{ include "alerta-helm.fullname" . }}-read
+  labels:
+    app: {{ include "alerta-helm.fullname" . }}-read
+    {{- include "alerta-helm.labels" . | nindent 4 }}
+  {{- with .Values.read.route.annotations }}
+  annotations:
+    {{ toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  host: {{ .Values.read.route.host }}
+  path: {{ .Values.read.route.path }}
+  port:
+    targetPort: {{ include "alerta-helm.fullname" . }}-read
+  to:
+    kind: Service
+    name: {{ include "alerta-helm.fullname" . }}-read
+    weight: 100
+  wildcardPolicy: None
+  {{- if .Values.read.route.tls.enabled }}
+  tls:
+    insecureEdgeTerminationPolicy: Redirect
+    termination: edge
+  {{- end }}
+{{- end }}
