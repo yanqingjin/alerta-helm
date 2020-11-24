@@ -10,13 +10,18 @@ web:
     enabled: true
     host: alerta-web.example.local
 
-config:
-  crosOrigins:
-    - r'https?://.*\.example\.local'
-  endpoint: http://alerta-read.example.local
+alertaAdminUsers:
+  - admin
+alertaAdminPassword: admin
+
+alertaConfig: |
+  DATABASE_URL = 'mongodb://alerta:alerta@mongodb.example.local:3717/alerta'
+  CORS_ORIGINS = [r'https?://.*\.example\.local']
+
+alertaWebConfig: |
+  {
+    "endpoint": "http://alerta-read.example.local"
+  }
 
 postgresql:
   enabled: false
-
-database:
-  url: mongodb://alerta:alerta@mongodb.example.local:3717/alerta

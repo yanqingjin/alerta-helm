@@ -109,14 +109,25 @@ web:
     tls:
       enabled: false
 
-config:
-  crosOrigins:
-    - 'http://try.alerta.io'
-    - 'http://explorer.alerta.io'
-    - 'http://localhost'
-    - 'http://localhost:8000'
-    - r'https?://\w*\.?local\.alerta\.io:?\d*/?.*'
-  endpoint: http://localhost/api
+alertaAdminUsers:
+  - admin
+# alertaAdminPassword: "" # if not provided will be randomly generated
+# alertaAdminKey: "<your_api_key_here>"
+
+# ref: http://docs.alerta.io/en/latest/configuration.html
+# alertaConfig: |
+#   DEBUG = "True"
+#   AUTH_REQUIRED = "True"
+#   PLUGINS = ['normalise', 'enhance']
+#   CORS_ORIGINS = ['http://localhost:8000', r'https?://\w*\.?local\.alerta\.io:?\d*/?.*']
+#   DATABASE_URL: "" # provide db url here if you're not using the postgres chart
+
+# ref: http://docs.alerta.io/en/latest/webui.html
+# alertaWebConfig: |
+# // contents of config.json
+# {
+#   "endpoint": "http://localhost/api"
+# }
 
 # Configuration values for the postgresql dependency
 ## ref: https://github.com/helm/charts/blob/master/stable/postgresql/README.md
@@ -130,9 +141,6 @@ postgresql:
     enabled: true
   service:
     port: 5432
-
-database:
-  url: postgres://alerta:alerta@localhost:5432/alerta
 
 serviceAccount:
   # Specifies whether a service account should be created

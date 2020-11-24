@@ -35,7 +35,7 @@ spec:
       volumes:
         - name: alerta-config
           configMap:
-            name: {{ include "alerta-helm.fullname" . }}-config
+            name: {{ include "alerta-helm.fullname" . }}
       containers:
         - name: {{ include "alerta-helm.fullname" . }}-web
           {{- with .Values.web.env }}
@@ -52,7 +52,6 @@ spec:
             - name: alerta-config
               mountPath: /usr/share/nginx/html/config.json
               subPath: config.json
-              readOnly: true
           # livenessProbe:
           #   httpGet:
           #     path: /

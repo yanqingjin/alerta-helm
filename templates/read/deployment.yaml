@@ -35,16 +35,28 @@ spec:
       volumes:
         - name: alerta-config
           configMap:
-            name: {{ include "alerta-helm.fullname" . }}-config
+            name: {{ include "alerta-helm.fullname" . }}
       containers:
         - name: {{ include "alerta-helm.fullname" . }}-read
           env:
-            {{- if .Values.postgresql.enabled }}
-            - name: DATABASE_URL
-              value: postgres://{{ .Values.postgresql.postgresqlUsername }}:{{ .Values.postgresql.postgresqlPassword }}@{{ include "alerta-helm.fullname" . }}-postgresql:{{ .Values.postgresql.service.port }}/{{ .Values.postgresql.postgresqlDatabase }}
-            {{- else }}
-            - name: DATABASE_URL
-              value: {{ .Values.database.url }}
+            {{- if .Values.alertaAdminUsers }}
+            - name: ADMIN_USERS
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "alerta-helm.fullname" . }}
+                  key: alerta-admin-users
+            {{- end }}
+            - name: ADMIN_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "alerta-helm.fullname" . }}
+                  key: alerta-admin-password
+            {{- if .Values.alertaAdminKey }}
+            - name: ADMIN_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "alerta-helm.fullname" . }}
+                  key: alerta-admin-key
             {{- end }}
             - name: ALERTA_SVR_CONF_FILE
               value: /etc/alerta/alertad.conf
@@ -61,7 +73,6 @@ spec:
             - name: alerta-config
               mountPath: /etc/alerta/alertad.conf
               subPath: alertad.conf
-              readOnly: true
           # livenessProbe:
           #   httpGet:
           #     path: /
