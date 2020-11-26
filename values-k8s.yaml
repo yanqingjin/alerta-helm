@@ -1,0 +1,22 @@
+fullnameOverride: alerta
+
+read:
+  ingress:
+    enabled: true
+    hosts:
+      - host: alerta-api-read.shenyang-k8s.internal
+        paths:
+          - /
+
+web:
+  ingress:
+    enabled: true
+    hosts:
+      - host: alerta.shenyang-k8s.internal
+        paths:
+          - /
+
+config:
+  crosOrigins:
+    - r'https?://.*\.shenyang-k8s\.internal'
+  endpoint: http://alerta-api-read.shenyang-k8s.internal
