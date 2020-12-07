@@ -5,7 +5,7 @@ read:
   replicaCount: 1
   image:
     repository: registry.cn-shanghai.aliyuncs.com/hsc-public/alerta-server
-    tag: fa75125
+    tag: 47a2ba9
   service:
     type: ClusterIP
     port: 8080
@@ -48,7 +48,7 @@ write:
   replicaCount: 1
   image:
     repository: registry.cn-shanghai.aliyuncs.com/hsc-public/alerta-server
-    tag: fa75125
+    tag: 47a2ba9
   service:
     type: ClusterIP
     port: 8080
