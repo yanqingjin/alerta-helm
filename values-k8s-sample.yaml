@@ -16,7 +16,14 @@ web:
         paths:
           - /
 
-config:
-  crosOrigins:
-    - r'https?://.*\.example\.local'
-  endpoint: http://alerta-read.example.local
+alertaAdminUsers:
+  - admin
+alertaAdminPassword: admin
+
+alertaConfig: |
+  CORS_ORIGINS = [r'https?://.*\.example\.local']
+
+alertaWebConfig: |
+  {
+    "endpoint": "http://alerta-read.example.local"
+  }
