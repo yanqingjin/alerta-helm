@@ -1,0 +1,52 @@
+imagePullPolicy: IfNotPresent
+
+read:
+  image:
+    tag: ab3133f
+  autoscaling:
+    enabled: true
+  route:
+    enabled: true
+    host: alerta-read.apps.okd.philips-healthsuitechina.com.cn
+
+write:
+  image:
+    tag: f537b4f
+  autoscaling:
+    enabled: true
+    minReplicas: 2
+  route:
+    enabled: true
+    host: alerta-write.apps.okd.philips-healthsuitechina.com.cn
+
+web:
+  image:
+    tag: b4a9ae4
+  autoscaling:
+    enabled: true
+  route:
+    enabled: true
+    host: alerta-web.apps.okd.philips-healthsuitechina.com.cn
+
+alertaAdminUsers:
+  - alerta
+alertaAdminPassword: alerta
+
+alertaConfig: |
+  AUTH_REQUIRED = True
+  CUSTOMER_VIEWS = True
+  ALLOWED_ENVIRONMENTS = ['HSDP', 'HSC']
+  DATABASE_URL = 'postgres://alerta:Philips%40123@pgm-uf6fg747j97j5d9c129210.pg.rds.aliyuncs.com:1921/alerta'
+  CORS_ORIGINS = [r'http://localhost:[0-9]*', r'https?://.*\.philips-healthsuitechina\.com\.cn']
+  COLUMNS = ['severity', 'status', 'lastReceiveTime', 'timeoutLeft', 'duplicateCount', 'project', 'environment', 'service', 'event', 'value', 'text']
+  PLUGINS = ['remote_ip', 'reject', 'heartbeat', 'blackout', 'forwarder', 'amqp']
+  AMQP_URL = 'mongodb://kombu:Philips123@dds-uf61689091334d341.mongodb.rds.aliyuncs.com:3717,dds-uf61689091334d342.mongodb.rds.aliyuncs.com:3717/kombu'
+  AMQP_TOPIC = 'alerta.notify'
+
+alertaWebConfig: |
+  {
+    "endpoint": "http://alerta-read.apps.okd.philips-healthsuitechina.com.cn"
+  }
+
+postgresql:
+  enabled: false
