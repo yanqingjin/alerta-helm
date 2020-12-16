@@ -36,6 +36,9 @@ spec:
         - name: alerta-config
           configMap:
             name: {{ include "alerta-helm.fullname" . }}
+        - name: mailer-config
+          configMap:
+            name: {{ include "alerta-helm.fullname" . }}
       containers:
         - name: {{ include "alerta-helm.fullname" . }}-read
           env:
@@ -73,6 +76,12 @@ spec:
             - name: alerta-config
               mountPath: /etc/alerta/alertad.conf
               subPath: alertad.conf
+            - name: mailer-config
+              mountPath: /etc/alerta/mailer.conf
+              subPath: mailer.conf
+            # - name: mailer-rules
+            #   mountPath: /etc/alerta/mailer.conf.d/rules.json
+            #   subPath: rules.json
           livenessProbe:
             httpGet:
               path: /

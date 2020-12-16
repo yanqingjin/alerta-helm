@@ -17,3 +17,11 @@ data:
 {{- if .Values.alertaWebConfig }}
     {{ .Values.alertaWebConfig | nindent 4 }}
 {{- end }}
+  mailer.conf: |
+{{- if .Values.mailerConfig }}
+    {{ .Values.mailerConfig | nindent 4 }}
+{{- end }}
+#   rules.json: |
+# {{- if .Values.mailerRules }}
+#     {{ .Values.mailerRules | nindent 4 }}
+# {{- end }}
