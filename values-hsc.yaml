@@ -48,5 +48,26 @@ alertaWebConfig: |
     "endpoint": "http://alerta-read.apps.okd.philips-healthsuitechina.com.cn"
   }
 
+mailerConfig: |
+  key = 4GK0xJ6bi_NCqwSWcMpGPsauKvEUonQ6v7AFvlk0
+  mail_from = rylandcai@163.com
+  mail_to = neveriasmart@yahoo.com
+  amqp_url = mongodb://kombu:Philips123@dds-uf61689091334d341.mongodb.rds.aliyuncs.com:3717,dds-uf61689091334d342.mongodb.rds.aliyuncs.com:3717/kombu'
+  dashboard_url = http://alerta-web.apps.okd.philips-healthsuitechina.com.cn
+  smtp_username = smtp.163.com
+  smtp_password = OXCCFUEPABURVSZC
+  smtp_use_ssl = False
+  debug = True
+  skip_mta = False
+  email_type = text
+# mailerRules: |
+#   [
+#     {
+#       "name": "test",
+#       "fields": [{ "field": "resource", "regex": ".*" }],
+#       "contacts": [ "ryland.cai@philips.com" ]
+#     }
+#   ]
+
 postgresql:
   enabled: false

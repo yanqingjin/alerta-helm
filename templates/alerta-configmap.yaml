@@ -17,3 +17,7 @@ data:
 {{- if .Values.alertaWebConfig }}
     {{ .Values.alertaWebConfig | nindent 4 }}
 {{- end }}
+  mailer.conf: |
+{{- if .Values.mailerConfig }}
+    {{ .Values.mailerConfig | nindent 4 }}
+{{- end }}
