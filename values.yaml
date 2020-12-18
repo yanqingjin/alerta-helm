@@ -144,7 +144,7 @@ alertaAdminUsers:
 #   DATABASE_URL: "" # provide db url here if you're not using the postgres chart
 
 # ref: http://docs.alerta.io/en/latest/webui.html
-# alertaWebConfig: |
+# webConfig: |
 # // contents of config.json
 # {
 #   "endpoint": "http://localhost/api"

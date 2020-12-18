@@ -33,7 +33,13 @@ spec:
       securityContext:
         {{- toYaml .Values.podSecurityContext | nindent 8 }}
       volumes:
+        - name: alerta-server-config
+          configMap:
+            name: {{ include "alerta-helm.fullname" . }}
         - name: alerta-config
+          configMap:
+            name: {{ include "alerta-helm.fullname" . }}
+        - name: mailer-rules
           configMap:
             name: {{ include "alerta-helm.fullname" . }}
       containers:
@@ -60,6 +66,8 @@ spec:
             {{- end }}
             - name: ALERTA_SVR_CONF_FILE
               value: /etc/alerta/alertad.conf
+            - name: ALERT_CONF_FILE
+              value: /etc/alerta/alerta.conf
             {{- with .Values.write.env }}
             {{- toYaml . | nindent 12 }}
             {{- end }}
@@ -70,9 +78,15 @@ spec:
               containerPort: {{ .Values.write.service.port }}
               protocol: TCP
           volumeMounts:
-            - name: alerta-config
+            - name: alerta-server-config
               mountPath: /etc/alerta/alertad.conf
               subPath: alertad.conf
+            - name: alerta-config
+              mountPath: /etc/alerta/alerta.conf
+              subPath: alerta.conf
+            - name: mailer-rules
+              mountPath: /etc/alerta/alerta.rules.d/rules.json
+              subPath: rules.json
           livenessProbe:
             httpGet:
               path: /

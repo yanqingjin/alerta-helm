@@ -7,21 +7,21 @@ metadata:
     {{- include "alerta-helm.labels" . | nindent 4 }}
 data:
   alertad.conf: |
-{{- if .Values.alertaConfig }}
-    {{ .Values.alertaConfig | nindent 4 }}
+{{- if .Values.alertaServerConfig }}
+    {{ .Values.alertaServerConfig | nindent 4 }}
 {{- end }}
 {{- if .Values.postgresql.enabled }}
     DATABASE_URL = "postgres://{{ .Values.postgresql.postgresqlUsername }}:{{ .Values.postgresql.postgresqlPassword }}@{{ include "alerta-helm.fullname" . }}-postgresql:{{ .Values.postgresql.service.port }}/{{ .Values.postgresql.postgresqlDatabase }}"
 {{- end }}
-  config.json: |
-{{- if .Values.alertaWebConfig }}
-    {{ .Values.alertaWebConfig | nindent 4 }}
-{{- end }}
-  mailer.conf: |
-{{- if .Values.mailerConfig }}
-    {{ .Values.mailerConfig | nindent 4 }}
+  alerta.conf: |
+{{- if .Values.alertaConfig }}
+    {{ .Values.alertaConfig | nindent 4 }}
 {{- end }}
   rules.json: |
 {{- if .Values.mailerRules }}
     {{ .Values.mailerRules | nindent 4 }}
+{{- end }}
+  config.json: |
+{{- if .Values.webConfig }}
+    {{ .Values.webConfig | nindent 4 }}
 {{- end }}
