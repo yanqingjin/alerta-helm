@@ -144,6 +144,10 @@ alertaAdminUsers:
 #   DATABASE_URL: "" # provide db url here if you're not using the postgres chart
 #   HSDP_FIELD_MAPPING = ['application', 'hsdp_instance_name']
 #   PROM_FIELD_MAPPING = ['container', 'service', 'pod']
+#   SEVERITY_MAP = {'critical': 1, 'major': 2, 'minor': 3, 'warning': 4, 'info': 5}
+#   COLOR_MAP = {'severity': {'critical': 'red', 'major': 'orange', 'minor': 'yellow', 'warning': 'dodgerblue', 'info': '#00CC00', 'unknown': 'silver'}, 'text': 'black'}
+#   DEFAULT_NORMAL_SEVERITY = 'info'
+#   DEFAULT_PREVIOUS_SEVERITY = 'warning'
 
 # ref: http://docs.alerta.io/en/latest/webui.html
 # webConfig: |
