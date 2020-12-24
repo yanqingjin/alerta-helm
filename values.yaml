@@ -142,6 +142,8 @@ alertaAdminUsers:
 #   PLUGINS = ['normalise', 'enhance']
 #   CORS_ORIGINS = ['http://localhost:8000', r'https?://\w*\.?local\.alerta\.io:?\d*/?.*']
 #   DATABASE_URL: "" # provide db url here if you're not using the postgres chart
+#   HSDP_FIELD_MAPPING = ['application', 'hsdp_instance_name']
+#   PROM_FIELD_MAPPING = ['container', 'service', 'pod']
 
 # ref: http://docs.alerta.io/en/latest/webui.html
 # webConfig: |
