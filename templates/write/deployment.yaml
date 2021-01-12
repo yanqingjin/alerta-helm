@@ -33,7 +33,7 @@ spec:
       securityContext:
         {{- toYaml .Values.podSecurityContext | nindent 8 }}
       volumes:
-        - name: alerta-config
+        - name: alerta-server-config
           configMap:
             name: {{ include "alerta-helm.fullname" . }}
       containers:
@@ -70,7 +70,7 @@ spec:
               containerPort: {{ .Values.write.service.port }}
               protocol: TCP
           volumeMounts:
-            - name: alerta-config
+            - name: alerta-server-config
               mountPath: /etc/alerta/alertad.conf
               subPath: alertad.conf
           livenessProbe:

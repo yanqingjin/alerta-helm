@@ -18,7 +18,7 @@ alertaConfig: |
   DATABASE_URL = 'mongodb://alerta:alerta@mongodb.example.local:3717/alerta'
   CORS_ORIGINS = [r'https?://.*\.example\.local']
 
-alertaWebConfig: |
+webConfig: |
   {
     "endpoint": "http://alerta-read.example.local"
   }

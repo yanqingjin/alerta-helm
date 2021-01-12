@@ -139,12 +139,33 @@ alertaAdminUsers:
 # alertaConfig: |
 #   DEBUG = "True"
 #   AUTH_REQUIRED = "True"
-#   PLUGINS = ['normalise', 'enhance']
 #   CORS_ORIGINS = ['http://localhost:8000', r'https?://\w*\.?local\.alerta\.io:?\d*/?.*']
 #   DATABASE_URL: "" # provide db url here if you're not using the postgres chart
+#   ALLOWED_ENVIRONMENTS = ['HSC', 'HSDP']
+#   ASI_QUERIES = [
+#     {'text': 'HSC', 'query': [['environment', 'HSC']]},
+#     {'text': 'HSDP', 'query': [['environment', 'HSDP']]}
+#   ]
+#   HSDP_FIELD_MAPPING = ['application', 'hsdp_instance_name']
+#   PROM_FIELD_MAPPING = ['container', 'service', 'pod']
+#   SEVERITY_MAP = {'critical': 1, 'major': 2, 'minor': 3, 'warning': 4, 'info': 5}
+#   COLOR_MAP = {
+#     'severity': {
+#       'critical': 'red',
+#       'major': 'orange',
+#       'minor': 'yellow',
+#       'warning': 'dodgerblue',
+#       'info': 'green',
+#       'unknown': 'silver'
+#     },
+#     'text': 'black'
+#   }
+#   DEFAULT_NORMAL_SEVERITY = 'info'
+#   DEFAULT_PREVIOUS_SEVERITY = 'warning'
+#   PLUGINS = ['normalise', 'enhance']
 
 # ref: http://docs.alerta.io/en/latest/webui.html
-# alertaWebConfig: |
+# webConfig: |
 # // contents of config.json
 # {
 #   "endpoint": "http://localhost/api"
